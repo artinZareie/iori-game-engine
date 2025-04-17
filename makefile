@@ -1,37 +1,49 @@
-# Makefile for running clang-format
+# Directories and Build Config
+BUILD_DIR    := build
+SRC_DIRS     := src include
+FILE_EXTS    := *.cpp *.cxx *.c *.h *.hpp *.tpp
+BUILD_TYPE   ?= DEBUG  # Default to Debug (override with BUILD_TYPE=Release)
 
-# Directories to search for source files
-SRC_DIRS := src include
-
-# File extensions to format
-FILE_EXTS := *.cpp *.cxx *.c *.h *.hpp *.tpp
-
-# Find all source files recursively
+# Source files for formatting
 SOURCE_FILES := $(shell find $(SRC_DIRS) -type f \( $(foreach ext,$(FILE_EXTS),-name '$(ext)' -o) -false \))
-BUILD_DIR	 := build
 
-# Default target (does nothing by default)
+# Default target (help)
 all:
 	@echo "Available targets:"
+	@echo "  make generate  - Generate CMake build system (Debug/Release)"
+	@echo "  make compile   - Build project using CMake"
+	@echo "  make run       - Run executable"
 	@echo "  make format    - Format source code"
 	@echo "  make profile   - Run gprof performance profiling"
-	@echo "  make clean     - Remove build artifacts"
+	@echo "  make clean     - Clean build artifacts"
 
-# Format all source files
+# CMake Generation (Debug/Release)
+generate:
+	@mkdir -p $(BUILD_DIR)
+	@cmake -G Ninja -DCMAKE_BUILD_TYPE=$(BUILD_TYPE) -S . -B $(BUILD_DIR)
+	@echo "CMake generated for $(BUILD_TYPE) build"
+
+# CMake Compile
+compile:
+	@cmake --build $(BUILD_DIR)
+
+# Run executable
+run: compile
+	@cd $(BUILD_DIR) && ./iori_game_engine
+
+# Format source files
 format:
 	@echo "Formatting files with clang-format..."
 	@clang-format -i --style=Microsoft $(SOURCE_FILES)
 	@echo "Formatting complete!"
-	@echo "Formatted files: " $(SOURCE_FILES)
 
+# Generate profiling results
 profile:
-	@echo "Generating profiling results..."
 	@gprof $(BUILD_DIR)/iori_game_engine $(BUILD_DIR)/gmon.out > $(BUILD_DIR)/profile_results.txt
 	@echo "Profile results saved to $(BUILD_DIR)/profile_results.txt"
 
-# Clean build artifacts (example)
+# Clean build artifacts
 clean:
-	@echo "Cleaning build artifacts..."
-	@rm -rf build/*
+	@rm -rf $(BUILD_DIR)/*
 
-.PHONY: all format clean
+.PHONY: all generate compile run format profile clean

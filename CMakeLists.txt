@@ -56,6 +56,26 @@ if(MSVC)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /PROFILE")
 endif()
 
+#------------------------Dependencies Setup------------------------
+find_package(glfw3 REQUIRED)
+find_package(OpenGL REQUIRED)
+
+set(IMGUI_SOURCES
+    third_party/imgui/imgui.cpp
+    third_party/imgui/imgui_demo.cpp
+    third_party/imgui/imgui_draw.cpp
+    third_party/imgui/imgui_tables.cpp
+    third_party/imgui/imgui_widgets.cpp
+    third_party/imgui/backends/imgui_impl_glfw.cpp
+    third_party/imgui/backends/imgui_impl_opengl3.cpp
+)
+
+add_library(imgui
+    ${IMGUI_SOURCES}
+)
+
+#------------------------Project Setup------------------------
+
 # Actual project
 set(SOURCES
     src/main.cpp
@@ -64,9 +84,21 @@ set(SOURCES
 # Include directory
 include_directories(
     include
+    third_party/imgui
+    third_party/imgui/backends
 )
 
 # Add the executable target
 add_executable(${PROJECT_NAME} ${SOURCES})
 
 # Link libraries
+target_include_directories(${PROJECT_NAME} PRIVATE
+    third_party/imgui
+    third_party/imgui/backends
+)
+
+target_link_libraries(${PROJECT_NAME} PRIVATE
+    glfw
+    GL
+    imgui
+)
