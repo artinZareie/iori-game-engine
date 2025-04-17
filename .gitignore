@@ -1,2 +1,5 @@
 build
 build/**/
+.cache
+.vscode
+iori_game_engine.code-workspace

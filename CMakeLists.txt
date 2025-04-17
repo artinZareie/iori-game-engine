@@ -47,8 +47,9 @@ if(MSVC)
 endif()
 
 #------------------------Profiling flags------------------------
-if(CMAKE_CXX_COMPILER_ID MATCHES "Clang|GNU")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pg -fbranch-probabilities -fprofile-generate")
+# GCC|Clang|Intel
+if(CMAKE_CXX_COMPILER_ID MATCHES "Clang|GNU|Intel")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pg")
 endif()
 
 # MSVC
@@ -84,6 +85,8 @@ set(SOURCES
 # Include directory
 include_directories(
     include
+
+    # Dependencies
     third_party/imgui
     third_party/imgui/backends
 )
@@ -92,11 +95,6 @@ include_directories(
 add_executable(${PROJECT_NAME} ${SOURCES})
 
 # Link libraries
-target_include_directories(${PROJECT_NAME} PRIVATE
-    third_party/imgui
-    third_party/imgui/backends
-)
-
 target_link_libraries(${PROJECT_NAME} PRIVATE
     glfw
     GL
