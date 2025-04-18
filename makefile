@@ -27,7 +27,7 @@ gen_resources:
 generate:
 	@mkdir -p $(BUILD_DIR)
 	@$(MAKE) gen_resources
-	@cmake -G Ninja -DCMAKE_BUILD_TYPE=$(BUILD_TYPE) -S . -B $(BUILD_DIR)
+	@cmake -DCMAKE_BUILD_TYPE=$(BUILD_TYPE) -S . -B $(BUILD_DIR)
 	@echo "CMake generated for $(BUILD_TYPE) build"
 
 # CMake Compile
@@ -37,6 +37,12 @@ compile:
 # Run executable
 run: compile
 	@cd $(BUILD_DIR) && ./iori_game_engine
+
+seq:
+	@$(MAKE) clean
+	@$(MAKE) generate
+	@$(MAKE) compile
+	@$(MAKE) run
 
 # Format source files
 format:

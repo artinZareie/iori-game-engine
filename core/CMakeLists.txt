@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.10)
 
-project(iori_game_engine)
+project(core LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 20)
 
@@ -57,51 +57,24 @@ if(MSVC)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /PROFILE")
 endif()
 
-#------------------------Dependencies Setup------------------------
-find_package(glfw3 REQUIRED)
-find_package(OpenGL REQUIRED)
+#------------------------Shared Library------------------------
 
-set(IMGUI_SOURCES
-    third_party/imgui/imgui.cpp
-    third_party/imgui/imgui_demo.cpp
-    third_party/imgui/imgui_draw.cpp
-    third_party/imgui/imgui_tables.cpp
-    third_party/imgui/imgui_widgets.cpp
-    third_party/imgui/backends/imgui_impl_glfw.cpp
-    third_party/imgui/backends/imgui_impl_opengl3.cpp
-)
-
-add_library(imgui
-    ${IMGUI_SOURCES}
-)
-
-add_subdirectory(core)
-
-#------------------------Project Setup------------------------
-
-# Actual project
 set(SOURCES
-    src/main.cpp
+    src/core.cpp
 )
 
-# Include directory
-include_directories(
-    include
-
-    # Dependencies
-    third_party/imgui
-    third_party/imgui/backends
-
-    third_party/stb
+add_library(
+    ${PROJECT_NAME} SHARED
+    ${SOURCES}
 )
 
-# Add the executable target
-add_executable(${PROJECT_NAME} ${SOURCES})
+target_link_directories(${PROJECT_NAME} PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    $<INSTALL_INTERFACE:include>
+)
 
-# Link libraries
-target_link_libraries(${PROJECT_NAME} PRIVATE
-    glfw
-    GL
-    imgui
-    core
+target_include_directories(core
+  PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    $<INSTALL_INTERFACE:include>
 )

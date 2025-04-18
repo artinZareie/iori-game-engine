@@ -5,8 +5,8 @@
 #include <filesystem>
 #include <imgui.h>
 #include <iostream>
-
 #define STB_IMAGE_IMPLEMENTATION
+#include <core.hpp>
 #include <stb_image.h>
 
 int main()
@@ -21,6 +21,8 @@ int main()
         glfwTerminate();
         return -1;
     }
+
+    std::cout << "Running Iori Engine version: " << Iori::Core::getVersion() << std::endl;
 
     glfwMaximizeWindow(window);
 
@@ -40,6 +42,7 @@ int main()
     std::string icons_path[3] = {(cwd / "resources" / "icon_128.png").string(),
                                  (cwd / "resources" / "icon_64.png").string(),
                                  (cwd / "resources" / "icon_32.png").string()};
+
     GLFWimage icons[3];
     for (int i = 0; i < 3; i++)
     {
