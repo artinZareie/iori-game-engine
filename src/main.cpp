@@ -37,47 +37,24 @@ int main()
 
     const auto cwd = std::filesystem::current_path();
 
-    std::cout << (cwd / "resources" / "icon_128.png").string() << std::endl;
-
+    std::string icons_path[3] = {(cwd / "resources" / "icon_128.png").string(),
+                                 (cwd / "resources" / "icon_64.png").string(),
+                                 (cwd / "resources" / "icon_32.png").string()};
     GLFWimage icons[3];
-    int width, height, channels;
-
-    unsigned char *data =
-        stbi_load((cwd / "resources" / "icon_128.png").string().c_str(), &width, &height, &channels, 0);
-
-    if (data)
+    for (int i = 0; i < 3; i++)
     {
-        icons[0].pixels = data;
-        icons[0].width = width;
-        icons[0].height = height;
-    }
-    else
-    {
-        std::cerr << "Failed to load icon_128.png" << std::endl;
-    }
-
-    data = stbi_load((cwd / "resources" / "icon_64.png").string().c_str(), &width, &height, &channels, 0);
-    if (data)
-    {
-        icons[1].pixels = data;
-        icons[1].width = width;
-        icons[1].height = height;
-    }
-    else
-    {
-        std::cerr << "Failed to load icon_64.png" << std::endl;
-    }
-
-    data = stbi_load((cwd / "resources" / "icon_32.png").string().c_str(), &width, &height, &channels, 0);
-    if (data)
-    {
-        icons[2].pixels = data;
-        icons[2].width = width;
-        icons[2].height = height;
-    }
-    else
-    {
-        std::cerr << "Failed to load icon_32.png" << std::endl;
+        int width, height, channels;
+        unsigned char *data = stbi_load(icons_path[i].c_str(), &width, &height, &channels, 0);
+        if (data)
+        {
+            icons[i].pixels = data;
+            icons[i].width = width;
+            icons[i].height = height;
+        }
+        else
+        {
+            std::cerr << "Failed to load " << icons_path[i] << std::endl;
+        }
     }
 
     glfwSetWindowIcon(window, 3, icons);
