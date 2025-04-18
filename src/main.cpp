@@ -2,7 +2,12 @@
 #include <GLFW/glfw3.h>
 #include <backends/imgui_impl_glfw.h>
 #include <backends/imgui_impl_opengl3.h>
+#include <filesystem>
 #include <imgui.h>
+#include <iostream>
+
+#define STB_IMAGE_IMPLEMENTATION
+#include <stb_image.h>
 
 int main()
 {
@@ -30,15 +35,60 @@ int main()
     ImGui_ImplGlfw_InitForOpenGL(window, true);
     ImGui_ImplOpenGL3_Init("#version 130");
 
+    const auto cwd = std::filesystem::current_path();
+
+    std::cout << (cwd / "resources" / "icon_128.png").string() << std::endl;
+
+    GLFWimage icons[3];
+    int width, height, channels;
+
+    unsigned char *data =
+        stbi_load((cwd / "resources" / "icon_128.png").string().c_str(), &width, &height, &channels, 0);
+
+    if (data)
+    {
+        icons[0].pixels = data;
+        icons[0].width = width;
+        icons[0].height = height;
+    }
+    else
+    {
+        std::cerr << "Failed to load icon_128.png" << std::endl;
+    }
+
+    data = stbi_load((cwd / "resources" / "icon_64.png").string().c_str(), &width, &height, &channels, 0);
+    if (data)
+    {
+        icons[1].pixels = data;
+        icons[1].width = width;
+        icons[1].height = height;
+    }
+    else
+    {
+        std::cerr << "Failed to load icon_64.png" << std::endl;
+    }
+
+    data = stbi_load((cwd / "resources" / "icon_32.png").string().c_str(), &width, &height, &channels, 0);
+    if (data)
+    {
+        icons[2].pixels = data;
+        icons[2].width = width;
+        icons[2].height = height;
+    }
+    else
+    {
+        std::cerr << "Failed to load icon_32.png" << std::endl;
+    }
+
+    glfwSetWindowIcon(window, 3, icons);
+
     ImGui::StyleColorsDark();
 
     while (!glfwWindowShouldClose(window))
     {
         glfwPollEvents();
 
-        glfwSetWindowCloseCallback(window, [](GLFWwindow* window) {
-            glfwSetWindowShouldClose(window, true);
-        });
+        glfwSetWindowCloseCallback(window, [](GLFWwindow *window) { glfwSetWindowShouldClose(window, true); });
 
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();

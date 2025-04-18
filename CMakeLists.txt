@@ -89,6 +89,8 @@ include_directories(
     # Dependencies
     third_party/imgui
     third_party/imgui/backends
+
+    third_party/stb
 )
 
 # Add the executable target

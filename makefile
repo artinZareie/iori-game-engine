@@ -1,8 +1,9 @@
 # Directories and Build Config
-BUILD_DIR    := build
-SRC_DIRS     := src include
-FILE_EXTS    := *.cpp *.cxx *.c *.h *.hpp *.tpp
-BUILD_TYPE   ?= DEBUG  # Default to Debug (override with BUILD_TYPE=Release)
+BUILD_DIR    	:= build
+RESOURCES_DIR 	:= resources
+SRC_DIRS     	:= src include
+FILE_EXTS    	:= *.cpp *.cxx *.c *.h *.hpp *.tpp
+BUILD_TYPE   	?= DEBUG  # Default to Debug (override with BUILD_TYPE=Release)
 
 # Source files for formatting
 SOURCE_FILES := $(shell find $(SRC_DIRS) -type f \( $(foreach ext,$(FILE_EXTS),-name '$(ext)' -o) -false \))
@@ -17,9 +18,15 @@ all:
 	@echo "  make profile   - Run gprof performance profiling"
 	@echo "  make clean     - Clean build artifacts"
 
+gen_resources:
+	@mkdir -p $(BUILD_DIR)/resources
+	@cp -R $(RESOURCES_DIR) $(BUILD_DIR)/
+	@echo "Resources copied to $(BUILD_DIR)/resources"
+
 # CMake Generation (Debug/Release)
 generate:
 	@mkdir -p $(BUILD_DIR)
+	@$(MAKE) gen_resources
 	@cmake -G Ninja -DCMAKE_BUILD_TYPE=$(BUILD_TYPE) -S . -B $(BUILD_DIR)
 	@echo "CMake generated for $(BUILD_TYPE) build"
 
